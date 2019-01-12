@@ -1,39 +1,34 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Movie from './Movie'
+import Movie from './Movie';
 
-const movies = [
-  {
-    id: 1,
-    title: "Usual Suspects",
-    desc: "Kevin Spacey movie"
-  },
-  {
-    id: 2,
-    title: "Goodfellas"
-  },
-  {
-    id: 3,
-    title: "Gladiator"
-  },
-  {
-    id: 4,
-    title: "Jurassic Park"
+export default class App extends Component {
+  state = {
+    movies: [],
   }
-];
 
-class App extends Component {
+  async componentDidMount() {
+    try {
+      const res = await fetch('https://api.themoviedb.org/3/discover/movie?api_key=5a3ed6513ac589600cf0f533446d29fe&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1');
+      const movies = await res.json();
+      this.setState({
+        movies: movies.results,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   render() {
+    const movies = this.state.movies;
     return (
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </header>
-        {movies.map(movie => <Movie key={movie.id} movie={movie} desc={movie.desc} />)}
+        {movies.map(movie => <Movie key={movie.id} movie={movie} />)}
       </div>
     );
   }
 }
-
-export default App;
